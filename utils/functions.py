@@ -44,8 +44,9 @@ def get_number_vacancies_by_employer(employer_id):
         data_out = json.loads(data_in)  # преобразуем полученные данные из формата json
 
         num_vacancies = data_out['found']  # получаем количество вакансий работодателя
-        name_employer = data_out['items'][0]['employer']['name']
+        name_employer = data_out['items'][0]['employer']['name']  # получаем наименование работодателя
 
+        # проверяем количество вакансий на случай превышения лимита
         if num_vacancies > 2000:
             print(f'Количество вакансий работодателя {name_employer} превышает лимит\n'
                   f'Будут выведены последние 2000 вакансий ')
