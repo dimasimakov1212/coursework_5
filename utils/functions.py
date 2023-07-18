@@ -43,7 +43,13 @@ def get_number_vacancies_by_employer(employer_id):
 
         data_out = json.loads(data_in)  # преобразуем полученные данные из формата json
 
-        num_vacancies = data_out['found']
+        num_vacancies = data_out['found']  # получаем количество вакансий работодателя
+        name_employer = data_out['items'][0]['employer']['name']
+
+        if num_vacancies > 2000:
+            print(f'Количество вакансий работодателя {name_employer} превышает лимит\n'
+                  f'Будут выведены последние 2000 вакансий ')
+            num_vacancies = 2000
 
     if req.status_code != 200:
         print("В настоящий момент сайт недоступен. Попробуйте позже.")
@@ -62,7 +68,7 @@ def get_number_pages_for_search(num_vacancies):
     return num_pages
 
 
-def get_vacancies_hh_by_employer(employer_id):
+def get_vacancies_hh_by_employer(employer_id, num_pages):
     """
     Формирует запрос на API сайта HeadHunter для получения выборки вакансий
     по работодателю
@@ -70,7 +76,7 @@ def get_vacancies_hh_by_employer(employer_id):
     """
 
     per_page_num = 100  # задаем кол-во вакансий на 1 странице
-    page_num = 10  # задаем количество страниц
+    page_num = num_pages  # задаем количество страниц
     vacancies_count = 0  # задаем счетчик вакансий
     url_api = f'https://api.hh.ru/vacancies'  # адрес запроса вакансий через API
     vacancies_list = []  # список, в который будут сохраняться вакансии по запросу
@@ -121,8 +127,10 @@ def get_vacancies_hh_by_employer(employer_id):
     return data_out
 
 
-# a = get_number_vacancies_by_employer(669587)
-# print(a)
+b = get_number_vacancies_by_employer(3127)
+print(b)
+c = get_number_pages_for_search(b)
+print(c)
 
-a = get_number_pages_for_search(186)
-print(a)
+a = get_vacancies_hh_by_employer(3127, c)
+print(a['found'])
