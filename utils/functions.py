@@ -51,6 +51,17 @@ def get_number_vacancies_by_employer(employer_id):
     return num_vacancies
 
 
+def get_number_pages_for_search(num_vacancies):
+    """
+    Определяет количество страниц, необходимых для поиска вакансий
+    :param num_vacancies: количество вакансий работодателя
+    :return: num_pages
+    """
+    num_pages = round((num_vacancies + 50) / 100)
+
+    return num_pages
+
+
 def get_vacancies_hh_by_employer(employer_id):
     """
     Формирует запрос на API сайта HeadHunter для получения выборки вакансий
@@ -110,5 +121,8 @@ def get_vacancies_hh_by_employer(employer_id):
     return data_out
 
 
-a = get_number_vacancies_by_employer(669587)
+# a = get_number_vacancies_by_employer(669587)
+# print(a)
+
+a = get_number_pages_for_search(186)
 print(a)
