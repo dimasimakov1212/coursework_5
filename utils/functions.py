@@ -1,5 +1,7 @@
 import json
 import os
+import requests
+import time
 
 # файл в формате json со списком работодателей
 file_employers = os.path.abspath('../src/employers.json')
@@ -15,6 +17,98 @@ def reading_json(file_data):
     return data
 
 
-a = reading_json(file_employers)
-for i in a:
-    print(i['id'])
+def get_number_vacancies_by_employer(employer_id):
+    """
+    Формирует запрос на API сайта HeadHunter для получения количества вакансий
+    по работодателю
+    :param employer_id:
+    :return: num_vacancies: количество вакансий работодателя
+    """
+    num_vacancies = 0  # задаем количество вакансий работодателя
+    url_api = f'https://api.hh.ru/vacancies'  # адрес запроса вакансий через API
+
+    params = {'employer_id': employer_id}
+
+    headers = {
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 "
+                      "Safari/537.36",
+    }
+
+    req = requests.get(url_api, params=params, headers=headers)  # Посылаем запрос к API
+
+    if req.status_code == 200:  # проверяем на корректность ответа
+
+        data_in = req.content.decode()  # Декодируем ответ API, чтобы Кириллица отображалась корректно
+        req.close()
+
+        data_out = json.loads(data_in)  # преобразуем полученные данные из формата json
+
+        num_vacancies = data_out['found']
+
+    if req.status_code != 200:
+        print("В настоящий момент сайт недоступен. Попробуйте позже.")
+
+    return num_vacancies
+
+
+def get_vacancies_hh_by_employer(employer_id):
+    """
+    Формирует запрос на API сайта HeadHunter для получения выборки вакансий
+    по работодателю
+    :return: список вакансий по запросу
+    """
+
+    per_page_num = 100  # задаем кол-во вакансий на 1 странице
+    page_num = 10  # задаем количество страниц
+    vacancies_count = 0  # задаем счетчик вакансий
+    url_api = f'https://api.hh.ru/vacancies'  # адрес запроса вакансий через API
+    vacancies_list = []  # список, в который будут сохраняться вакансии по запросу
+
+    # перебираем страницы с вакансиями
+    for page in range(0, page_num):
+
+        # формируем справочник для параметров GET-запроса
+        params = {
+            'employer_id': employer_id,
+            'page': page,  # Индекс страницы поиска на HH
+            'per_page': per_page_num  # Кол-во вакансий на 1 странице
+        }
+
+        headers = {
+            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 "
+                          "Safari/537.36",
+        }
+
+        req = requests.get(url_api, params=params, headers=headers)  # Посылаем запрос к API
+
+        if req.status_code == 200:  # проверяем на корректность ответа
+
+            data_in = req.content.decode()  # Декодируем ответ API, чтобы Кириллица отображалась корректно
+            req.close()
+
+            data_out = json.loads(data_in)  # преобразуем полученные данные из формата json
+
+            # полученные вакансии складываем в словарь и добавляем его в список
+            for vacancy in data_out['items']:
+            #
+            #     # запускаем метод формирования словаря
+            #     vacancy_dict = HeadHunterApi.get_vacancy_dict(vacancy)
+            #
+            #     vacancies_list.append(vacancy_dict)  # полученный словарь добавляем в список
+                vacancies_count += 1  # увеличиваем счетчик вакансий
+
+        if req.status_code != 200:
+            print("В настоящий момент сайт недоступен. Попробуйте позже.")
+
+        if vacancies_count == data_out['found']:  # проверка на наличие вакансий на странице
+            break
+
+        time.sleep(0.2)  # временная задержка во избежание блокировки большого количества запросов
+
+    print(vacancies_count)
+
+    return data_out
+
+
+a = get_number_vacancies_by_employer(669587)
+print(a)
