@@ -128,10 +128,49 @@ def get_vacancies_hh_by_employer(employer_id, num_pages):
     return data_out
 
 
-b = get_number_vacancies_by_employer(3127)
-print(b)
-c = get_number_pages_for_search(b)
-print(c)
+def get_vacancies_by_employer(employer_id, page_num):
+    """
+    Формирует запрос на API сайта HeadHunter для получения выборки вакансий
+    по работодателю
+    employer_id - id работодателя
+    page_num - номер страницы поиска
+    :return: список вакансий по запросу
+    """
 
-a = get_vacancies_hh_by_employer(3127, c)
+    url_api = 'https://api.hh.ru/vacancies'  # адрес запроса вакансий через API
+
+    # формируем справочник для параметров GET-запроса
+    params = {
+        'employer_id': employer_id,
+        'page': page_num,  # Индекс страницы поиска на HH
+        'per_page': 100  # Кол-во вакансий на 1 странице
+    }
+
+    headers = {
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 "
+                      "Safari/537.36",
+    }
+
+    req = requests.get(url_api, params=params, headers=headers)  # Посылаем запрос к API
+
+    if req.status_code == 200:  # проверяем на корректность ответа
+
+        data_in = req.content.decode()  # Декодируем ответ API, чтобы Кириллица отображалась корректно
+        req.close()
+
+        data_out = json.loads(data_in)  # преобразуем полученные данные из формата json
+
+    if req.status_code != 200:
+        print("В настоящий момент сайт недоступен. Попробуйте позже.")
+
+    return data_out
+
+
+# b = get_number_vacancies_by_employer(3127)
+# print(b)
+# c = get_number_pages_for_search(b)
+# print(c)
+
+a = get_vacancies_by_employer(2605703, 0)
 print(a['found'])
+print(a)
