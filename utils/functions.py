@@ -17,43 +17,21 @@ def reading_json(file_data):
     return data
 
 
-def get_number_vacancies_by_employer(employer_id):
+def get_number_vacancies_by_employer(data_in):
     """
-    Формирует запрос на API сайта HeadHunter для получения количества вакансий
-    по работодателю
-    :param employer_id:
+    Из ответа на запрос о вакансиях работодателя получает количество вакансий
+    :param data_in: список вакансий, полученный из запроса к API
     :return: num_vacancies: количество вакансий работодателя
     """
-    num_vacancies = 0  # задаем количество вакансий работодателя
-    url_api = f'https://api.hh.ru/vacancies'  # адрес запроса вакансий через API
 
-    params = {'employer_id': employer_id}
+    num_vacancies = data_in['found']  # получаем количество вакансий работодателя
+    name_employer = data_in['items'][0]['employer']['name']  # получаем наименование работодателя
 
-    headers = {
-        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 "
-                      "Safari/537.36",
-    }
-
-    req = requests.get(url_api, params=params, headers=headers)  # Посылаем запрос к API
-
-    if req.status_code == 200:  # проверяем на корректность ответа
-
-        data_in = req.content.decode()  # Декодируем ответ API, чтобы Кириллица отображалась корректно
-        req.close()
-
-        data_out = json.loads(data_in)  # преобразуем полученные данные из формата json
-
-        num_vacancies = data_out['found']  # получаем количество вакансий работодателя
-        name_employer = data_out['items'][0]['employer']['name']  # получаем наименование работодателя
-
-        # проверяем количество вакансий на случай превышения лимита
-        if num_vacancies > 2000:
-            print(f'Количество вакансий работодателя {name_employer} превышает лимит\n'
-                  f'Будут выведены последние 2000 вакансий ')
-            num_vacancies = 2000
-
-    if req.status_code != 200:
-        print("В настоящий момент сайт недоступен. Попробуйте позже.")
+    # проверяем количество вакансий на случай превышения лимита
+    if num_vacancies > 2000:
+        print(f'Количество вакансий работодателя {name_employer} превышает лимит запросов\n'
+              f'Будут выведены последние 2000 вакансий ')
+        num_vacancies = 2000
 
     return num_vacancies
 
@@ -166,11 +144,9 @@ def get_vacancies_by_employer(employer_id, page_num):
     return data_out
 
 
-# b = get_number_vacancies_by_employer(3127)
-# print(b)
-# c = get_number_pages_for_search(b)
-# print(c)
-
-a = get_vacancies_by_employer(2605703, 0)
+a = get_vacancies_by_employer(41862, 0)
 print(a['found'])
-print(a)
+b = get_number_vacancies_by_employer(a)
+print(b)
+c = get_number_pages_for_search(b)
+print(c)
