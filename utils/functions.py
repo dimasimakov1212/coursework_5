@@ -199,3 +199,4 @@ for i in range(0, 6):
     e = get_vacancy_dict(d)
     print(e)
 # check work
+# check work_2
