@@ -198,3 +198,4 @@ for i in range(0, 6):
     d = a['items'][i]
     e = get_vacancy_dict(d)
     print(e)
+# check work
