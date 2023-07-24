@@ -12,6 +12,9 @@ file_employers = os.path.abspath('../src/employers.json')
 # файл с параметрами для создания базы данных
 file_config = os.path.abspath('../database.ini')
 
+# файл с sql запросами
+file_sql_queries = os.path.abspath('../src/queries.sql')
+
 
 def reading_json(file_data):
     """
@@ -192,7 +195,7 @@ def get_all_vacancies(employers_data):
     return vacancies_all
 
 
-def get_params(filename=file_config, section="postgresql"):
+def get_params(filename, section):
     """
     Получает параметры конфигурации для создания базы данных
     :return: словарь с параметрами для создания БД
@@ -259,6 +262,9 @@ def create_database(database_name: str, params: dict):
 
 # get_all_vacancies(file_employers)  # создание списка всех вакансий
 
-c1 = get_params()  # получаем словарь с параметрами для создания БД
-# print(c1)
-create_database('vac', c1)
+c1 = get_params(file_config, "postgresql")  # получаем словарь с параметрами для создания БД
+print(c1)
+# create_database('vac', c1)
+
+c2 = get_params(file_sql_queries, 'test2')  # получаем словарь с sql запросами
+print(c2)
