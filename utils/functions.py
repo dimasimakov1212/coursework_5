@@ -148,16 +148,55 @@ def get_all_vacancies_by_employer(employer_id, num_pages):
     return employer_vacancies
 
 
-a = get_vacancies_by_employer(669587, 0)  # запрос на нулевую страницу чтобы получить количество вакансий работодателя
+def get_all_vacancies(employers_data):
+    """
+    Получает список всех вакансий всех работодателей
+    :param employers_data: имя json файла с работодателями
+    :return: список всех вакансий по всем работодателям
+    """
+    vacancies_all = []  # задаем список, в который будут записаны все вакансии
+
+    # получаем список работодателей
+    employers_list = reading_json(employers_data)
+    print(f"Получен список из {len(employers_list)} работодателей")
+    print("Загружаю данные по вакансиям, подождите...\n")
+
+    # запускаем перебор работодателей
+    for employer in employers_list:
+        employer_id = employer['id']  # получаем id работодателя
+
+        req = get_vacancies_by_employer(employer_id, 0)  # делаем запрос о вакансиях работодателя
+        number_vacancies = get_number_vacancies_by_employer(req)  # получаем количество вакансий работодателя
+
+        if number_vacancies == 0:  # если у работодателя нет вакансий переходим к следующему
+            print(f"У работодателя {employer['employer']} нет свободных вакансий")
+            continue
+
+        # получаем количество страниц с вакансиями работодателя
+        number_pages = get_number_pages_for_search(number_vacancies)
+
+        # получаем список всех вакансий работодателя
+        vacancies_by_employer = get_all_vacancies_by_employer(employer_id, number_pages)
+
+        # записываем все вакансии в общий список
+        for vacancy in vacancies_by_employer:
+            vacancies_all.append(vacancy)
+
+    print(f"Всего получено {len(vacancies_all)} вакансий\n")
+
+    return vacancies_all
+
+
+# a = get_vacancies_by_employer(669587, 0)  # запрос на нулевую страницу чтобы получить количество вакансий работодателя
 # print(a)
 # for i in range(0, 6):
 #     d1 = a['items'][i]
 #     print(d1)
 #
-b = get_number_vacancies_by_employer(a)  # получаем количество вакансий
-print(b)
-c = get_number_pages_for_search(b)  # получаем количество страниц с вакансиями работодателя
-print(c)
+# b = get_number_vacancies_by_employer(a)  # получаем количество вакансий
+# print(b)
+# c = get_number_pages_for_search(b)  # получаем количество страниц с вакансиями работодателя
+# print(c)
 
 # for vac in a['items']:
 #     d = get_vacancy_dict(vac)
@@ -170,9 +209,10 @@ print(c)
 # check work
 # check work_2
 
-d = get_all_vacancies_by_employer(669587, c)  # получаем все вакансии работодателя
-print(len(d))
-# print(d)
+# d = get_all_vacancies_by_employer(669587, c)  # получаем все вакансии работодателя
+# print(len(d))
 
 # a1 = reading_json(file_employers)
 # print(a1)
+
+get_all_vacancies(file_employers)
