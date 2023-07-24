@@ -197,8 +197,8 @@ def get_all_vacancies(employers_data):
 
 def get_params(filename, section):
     """
-    Получает параметры конфигурации для создания базы данных
-    :return: словарь с параметрами для создания БД
+    Получает параметры конфигурации из файла с данными
+    :return: словарь с параметрами
     """
     parser = ConfigParser()  # создаем парсер
     parser.read(filename)  # считываем содержимое файла
@@ -218,17 +218,44 @@ def get_params(filename, section):
 def create_database(database_name: str, params: dict):
     """
     Создает базу данных для хранения вакансий
-    :param database_name:
-    :param params:
+    :param database_name: имя БД
+    :param params: параметры соединения
     :return:
     """
-    conn = psycopg2.connect(dbname='postgres', **params)
-    conn.autocommit = True
-    cur = conn.cursor()
+    conn = psycopg2.connect(dbname='postgres', **params)  # создаем соединение с БД
+    conn.autocommit = True  # включаем автокоммит запросов в БД
+    cur = conn.cursor()  # создаем курсор
 
-    cur.execute(f"DROP DATABASE IF EXISTS {database_name}")
-    cur.execute(f"CREATE DATABASE {database_name}")
+    cur.execute(f"DROP DATABASE IF EXISTS {database_name}")  # удаляем базу данных если она существует
+    cur.execute(f"CREATE DATABASE {database_name}")  # создаем новую базу данных
 
+    conn.close()  # закрываем соединение
+
+    # создаем таблицы в базе данных
+    conn = psycopg2.connect(dbname=database_name, **params)
+
+    with conn.cursor() as cur:  # таблица с работодателями
+        cur.execute("""
+            CREATE TABLE employers (
+                employer_id INT PRIMARY KEY,
+                employer_name VARCHAR(255) NOT NULL,
+                number_vacancies INTEGER
+            )
+        """)
+
+    with conn.cursor() as cur:  # таблица с вакансиями
+        cur.execute("""
+            CREATE TABLE vacancies (
+                vacancy_id INT PRIMARY KEY,
+                vacancy_name VARCHAR NOT NULL,
+                salary_from INTEGER,
+                salary_to INTEGER,
+                employer_id INT REFERENCES employers(employer_id),
+                vacancy_url TEXT
+            )
+        """)
+
+    conn.commit()
     conn.close()
 
 
@@ -263,8 +290,8 @@ def create_database(database_name: str, params: dict):
 # get_all_vacancies(file_employers)  # создание списка всех вакансий
 
 c1 = get_params(file_config, "postgresql")  # получаем словарь с параметрами для создания БД
-print(c1)
-# create_database('vac', c1)
+# print(c1)
+create_database('vacancies_hh', c1)  # создаем базу данных
 
-c2 = get_params(file_sql_queries, 'test2')  # получаем словарь с sql запросами
-print(c2)
+# c2 = get_params(file_sql_queries, 'test2')  # получаем словарь с sql запросами
+# print(c2)
