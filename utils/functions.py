@@ -179,24 +179,47 @@ def get_vacancy_dict(vacancy):
     return vacancy_dict
 
 
-a = get_vacancies_by_employer(669587, 0)
-# print(a)
-for i in range(0, 6):
-    d1 = a['items'][i]
-    print(d1)
+def get_all_vacancies_by_employer(employer_id, num_pages):
+    """
+    Запускает цикл по страницам с вакансиями работодателя
+    :param employer_id: id работодателя
+    :param num_pages: количество страниц для поиска
+    :return: список всех вакансий работодателя
+    """
+    employer_vacancies = []  # задаем список, в который будут записаны все вакансии работодателя
 
+    for page in range(num_pages):  # запускаем перебор страниц с вакансиями
+        vacancies_per_page = get_vacancies_by_employer(employer_id, page)  # получаем вакансии на одной странице
+
+        for count in vacancies_per_page['items']:  # запускаем перебор вакансий на странице
+            vacancy = get_vacancy_dict(count)  # формируем словарь с вакансией с необходимыми данными
+            employer_vacancies.append(vacancy)  # добавляем словарь вакансии в список
+
+    return employer_vacancies
+
+
+a = get_vacancies_by_employer(3127, 0)
+# print(a)
+# for i in range(0, 6):
+#     d1 = a['items'][i]
+#     print(d1)
+#
 b = get_number_vacancies_by_employer(a)
 print(b)
-# c = get_number_pages_for_search(b)
-# print(c)
+c = get_number_pages_for_search(b)
+print(c)
 
 # for vac in a['items']:
 #     d = get_vacancy_dict(vac)
 #     print(d)
 
-for i in range(0, 6):
-    d = a['items'][i]
-    e = get_vacancy_dict(d)
-    print(e)
+# for i in range(0, 6):
+#     d = a['items'][i]
+#     e = get_vacancy_dict(d)
+#     print(e)
 # check work
 # check work_2
+
+d = get_all_vacancies_by_employer(3127, c)
+print(len(d))
+# print(d)
