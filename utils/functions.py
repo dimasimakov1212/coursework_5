@@ -285,31 +285,28 @@ def create_database(database_name: str, params: dict):
     conn.close()
 
 
-def vacancies_table_filling(database_name: str, params: dict, vacancies_list):
+def employers_table_filling(database_name: str, params: dict, employers_list):
     """
-    Заполняет таблицу vacancies данными из списка вакансий
+    Заполняет таблицу employers данными из списка работодателей
     """
     # считываем данные из файла
     conn = psycopg2.connect(dbname=database_name, **params) # создаем соединение с БД
 
-    # # запускаем заполнение таблицы
-    # try:
-    #     with conn:
-    #         with conn.cursor() as cur:
-    #             for row in reader:
-    #                 # передаем данные из файла в таблицу базы данных
-    #                 cur.execute('INSERT INTO employees VALUES (%s, %s, %s, %s, %s, %s)',
-    #                             (row['employee_id'],
-    #                              row['first_name'],
-    #                              row['last_name'],
-    #                              row['title'],
-    #                              row['birth_date'],
-    #                              row['notes']))
-    #
-    #                 cur.execute('SELECT * FROM employees')  # записываем данные в таблицу
-    #
-    # finally:
-    #     conn.close()  # закрываем запись в БД
+    # запускаем заполнение таблицы
+    try:
+        with conn:
+            with conn.cursor() as cur:
+                for employer in employers_list:
+                    # передаем данные из списка в таблицу базы данных
+                    cur.execute('INSERT INTO employers VALUES (%s, %s, %s)',
+                                (employer['employer_id'],
+                                 employer['employer_name'],
+                                 employer['vacancies_count']))
+
+                    cur.execute('SELECT * FROM employers')  # записываем данные в таблицу
+
+    finally:
+        conn.close()  # закрываем запись в БД
 
 
 # a = get_vacancies_by_employer(669587, 0)  # запрос на нулевую страницу чтобы получить количество вакансий работодателя
@@ -332,9 +329,9 @@ a2 = get_employers_list(file_employers)  # создаем список рабо�
 # a1 = reading_json(file_employers)
 # print(a1)
 
-# c1 = get_params(file_config, "postgresql")  # получаем словарь с параметрами для создания БД
+c1 = get_params(file_config, "postgresql")  # получаем словарь с параметрами для создания БД
 # print(c1)
-# create_database('vacancies_hh', c1)  # создаем базу данных
-
+create_database('vacancies_hh', c1)  # создаем базу данных
+employers_table_filling('vacancies_hh', c1, a2)
 # c2 = get_params(file_sql_queries, 'test2')  # получаем словарь с sql запросами
 # print(c2)
