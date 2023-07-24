@@ -2,9 +2,13 @@ import json
 import os
 import requests
 import time
+import psycopg2
+from configparser import ConfigParser
+
 
 # файл в формате json со списком работодателей
 file_employers = os.path.abspath('../src/employers.json')
+file_config = os.path.abspath('../database.ini')
 
 
 def reading_json(file_data):
@@ -186,6 +190,26 @@ def get_all_vacancies(employers_data):
     return vacancies_all
 
 
+def get_params(filename=file_config, section="postgresql"):
+    """
+    Получает параметры конфигурации для создания базы данных
+    :return:
+    """
+    parser = ConfigParser()  # создаем парсер
+    parser.read(filename)  # считываем содержимое файла
+
+    params_dict = {}  # создаем словарь для хранения параметров
+
+    if parser.has_section(section):  # проверяем существует ли нужный раздел
+        params = parser.items(section)  # присваиваем переменной данные из раздела
+        for param in params:  # записываем данные в словарь
+            params_dict[param[0]] = param[1]
+    else:
+        raise Exception(
+            'Section {0} is not found in the {1} file.'.format(section, filename))
+    return params_dict
+
+
 # a = get_vacancies_by_employer(669587, 0)  # запрос на нулевую страницу чтобы получить количество вакансий работодателя
 # print(a)
 # for i in range(0, 6):
@@ -214,4 +238,7 @@ def get_all_vacancies(employers_data):
 # a1 = reading_json(file_employers)
 # print(a1)
 
-get_all_vacancies(file_employers)
+# get_all_vacancies(file_employers)  # создание списка всех вакансий
+
+c1 = get_params()
+print(c1)
