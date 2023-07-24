@@ -30,7 +30,7 @@ def get_number_vacancies_by_employer(data_in):
     # проверяем количество вакансий на случай превышения лимита
     if num_vacancies > 2000:
         print(f'Количество вакансий работодателя {name_employer} превышает лимит запросов\n'
-              f'Будут выведены последние 2000 вакансий ')
+              f'Будут загружены последние 2000 вакансий, ожидайте...')
         num_vacancies = 2000
 
     return num_vacancies
@@ -143,8 +143,6 @@ def get_all_vacancies_by_employer(employer_id, num_pages):
 
         time.sleep(0.2)  # временная задержка во избежание блокировки большого количества запросов
 
-    # print(vacancies_count)
-
     return employer_vacancies
 
 
@@ -182,6 +180,7 @@ def get_all_vacancies(employers_data):
         for vacancy in vacancies_by_employer:
             vacancies_all.append(vacancy)
 
+    print("\n------------ Загрузка завершена ------------")
     print(f"Всего получено {len(vacancies_all)} вакансий\n")
 
     return vacancies_all
