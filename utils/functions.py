@@ -8,6 +8,8 @@ from configparser import ConfigParser
 
 # файл в формате json со списком работодателей
 file_employers = os.path.abspath('../src/employers.json')
+
+# файл с параметрами для создания базы данных
 file_config = os.path.abspath('../database.ini')
 
 
@@ -193,7 +195,7 @@ def get_all_vacancies(employers_data):
 def get_params(filename=file_config, section="postgresql"):
     """
     Получает параметры конфигурации для создания базы данных
-    :return:
+    :return: словарь с параметрами для создания БД
     """
     parser = ConfigParser()  # создаем парсер
     parser.read(filename)  # считываем содержимое файла
@@ -208,6 +210,23 @@ def get_params(filename=file_config, section="postgresql"):
         raise Exception(
             'Section {0} is not found in the {1} file.'.format(section, filename))
     return params_dict
+
+
+def create_database(database_name: str, params: dict):
+    """
+    Создает базу данных для хранения вакансий
+    :param database_name:
+    :param params:
+    :return:
+    """
+    conn = psycopg2.connect(dbname='postgres', **params)
+    conn.autocommit = True
+    cur = conn.cursor()
+
+    cur.execute(f"DROP DATABASE IF EXISTS {database_name}")
+    cur.execute(f"CREATE DATABASE {database_name}")
+
+    conn.close()
 
 
 # a = get_vacancies_by_employer(669587, 0)  # запрос на нулевую страницу чтобы получить количество вакансий работодателя
@@ -240,5 +259,6 @@ def get_params(filename=file_config, section="postgresql"):
 
 # get_all_vacancies(file_employers)  # создание списка всех вакансий
 
-c1 = get_params()
-print(c1)
+c1 = get_params()  # получаем словарь с параметрами для создания БД
+# print(c1)
+create_database('vac', c1)
