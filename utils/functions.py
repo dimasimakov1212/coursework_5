@@ -7,7 +7,8 @@ from configparser import ConfigParser
 
 
 # файл в формате json со списком работодателей
-file_employers = os.path.abspath('../src/employers.json')
+# file_employers = os.path.abspath('../src/employers.json')
+file_employers = os.path.abspath('../src/test.json')
 
 # файл с параметрами для создания базы данных
 file_config = os.path.abspath('../database.ini')
@@ -309,6 +310,36 @@ def employers_table_filling(database_name: str, params: dict, employers_list):
         conn.close()  # закрываем запись в БД
 
 
+def vacancies_table_filling(database_name: str, params: dict, vacancies_list):
+    """
+    Заполняет таблицу employers данными из списка работодателей
+    """
+    # считываем данные из файла
+    conn = psycopg2.connect(dbname=database_name, **params) # создаем соединение с БД
+
+    # запускаем заполнение таблицы
+    try:
+        with conn:
+            with conn.cursor() as cur:
+                cur.execute('TRUNCATE ONLY vacancies RESTART IDENTITY')
+                for vacancy in vacancies_list:
+                    # передаем данные из списка в таблицу базы данных
+
+                    cur.execute('INSERT INTO vacancies VALUES (%s, %s, %s, %s, %s, %s)',
+                                (vacancy['vacancy_id'],
+                                 vacancy['vacancy_name'],
+                                 vacancy['salary_from'],
+                                 vacancy['salary_to'],
+                                 vacancy['employer_id'],
+                                 vacancy['vacancy_url']
+                                 ))
+
+                    cur.execute('SELECT * FROM vacancies')  # записываем данные в таблицу
+
+    finally:
+        conn.close()  # закрываем запись в БД
+
+
 # a = get_vacancies_by_employer(669587, 0)  # запрос на нулевую страницу чтобы получить количество вакансий работодателя
 # print(a)
 # for i in range(0, 6):
@@ -316,7 +347,10 @@ def employers_table_filling(database_name: str, params: dict, employers_list):
 #     print(d1)
 #
 a2 = get_employers_list(file_employers)  # создаем список работодателей с количеством вакансий
-# get_all_vacancies(a2)  # создание списка всех вакансий
+a3 = get_all_vacancies(a2)  # создание списка всех вакансий
+# for i in a3:
+#     if i['vacancy_id'] == 72664540:
+#         print(i)
 
 # b = get_number_vacancies_by_employer(a)  # получаем количество вакансий
 # print(b)
@@ -333,5 +367,7 @@ c1 = get_params(file_config, "postgresql")  # получаем словарь с
 # print(c1)
 create_database('vacancies_hh', c1)  # создаем базу данных
 employers_table_filling('vacancies_hh', c1, a2)
+vacancies_table_filling('vacancies_hh', c1, a3)
+
 # c2 = get_params(file_sql_queries, 'test2')  # получаем словарь с sql запросами
 # print(c2)
