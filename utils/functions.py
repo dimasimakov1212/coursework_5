@@ -155,6 +155,42 @@ def get_all_vacancies_by_employer(employer_id, num_pages):
     return employer_vacancies
 
 
+def get_employers_list(employers_data):
+    """
+    Создает список работодателей, который содержит
+    id работодателя, наименование работодателя, количество вакансий
+    :param employers_data: json файл с работодателями
+    :return:
+    """
+    employers_list = []  # создаем список для работодателей
+
+    # получаем список работодателей
+    employers = reading_json(employers_data)
+    print(f"Получен список из {len(employers)} работодателей")
+
+    # запускаем перебор работодателей
+    for employer in employers:
+        employer_dict = {}  # создаем пустой словарь для работодателя
+
+        employer_id = employer['id']  # получаем id работодателя
+
+        req = get_vacancies_by_employer(employer_id, 0)  # делаем запрос о вакансиях работодателя
+        number_vacancies = get_number_vacancies_by_employer(req)  # получаем количество вакансий работодателя
+
+        if number_vacancies == 0:  # если у работодателя нет вакансий переходим к следующему
+            print(f"У работодателя {employer['employer']} нет свободных вакансий")
+            continue
+
+        # формируем словарь
+        employer_dict['employer_id'] = employer['id']
+        employer_dict['employer_name'] = req['items'][0]['employer']['name']
+        employer_dict['vacancies_count'] = number_vacancies
+
+        employers_list.append(employer_dict)  # добавляем словарь с работодателем в список
+
+    return employers_list
+
+
 def get_all_vacancies(employers_data):
     """
     Получает список всех вакансий всех работодателей
@@ -259,12 +295,42 @@ def create_database(database_name: str, params: dict):
     conn.close()
 
 
+def vacancies_table_filling(database_name: str, params: dict, vacancies_list):
+    """
+    Заполняет таблицу vacancies данными из списка вакансий
+    """
+    # считываем данные из файла
+    conn = psycopg2.connect(dbname=database_name, **params) # создаем соединение с БД
+
+    # # запускаем заполнение таблицы
+    # try:
+    #     with conn:
+    #         with conn.cursor() as cur:
+    #             for row in reader:
+    #                 # передаем данные из файла в таблицу базы данных
+    #                 cur.execute('INSERT INTO employees VALUES (%s, %s, %s, %s, %s, %s)',
+    #                             (row['employee_id'],
+    #                              row['first_name'],
+    #                              row['last_name'],
+    #                              row['title'],
+    #                              row['birth_date'],
+    #                              row['notes']))
+    #
+    #                 cur.execute('SELECT * FROM employees')  # записываем данные в таблицу
+    #
+    # finally:
+    #     conn.close()  # закрываем запись в БД
+
+
 # a = get_vacancies_by_employer(669587, 0)  # запрос на нулевую страницу чтобы получить количество вакансий работодателя
 # print(a)
 # for i in range(0, 6):
 #     d1 = a['items'][i]
 #     print(d1)
 #
+# a2 = get_employers_list(file_employers)  # создаем список работодателей с количеством вакансий
+# print(a2)
+
 # b = get_number_vacancies_by_employer(a)  # получаем количество вакансий
 # print(b)
 # c = get_number_pages_for_search(b)  # получаем количество страниц с вакансиями работодателя
@@ -289,9 +355,9 @@ def create_database(database_name: str, params: dict):
 
 # get_all_vacancies(file_employers)  # создание списка всех вакансий
 
-c1 = get_params(file_config, "postgresql")  # получаем словарь с параметрами для создания БД
+# c1 = get_params(file_config, "postgresql")  # получаем словарь с параметрами для создания БД
 # print(c1)
-create_database('vacancies_hh', c1)  # создаем базу данных
+# create_database('vacancies_hh', c1)  # создаем базу данных
 
 # c2 = get_params(file_sql_queries, 'test2')  # получаем словарь с sql запросами
 # print(c2)
