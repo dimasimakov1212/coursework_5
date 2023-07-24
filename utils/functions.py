@@ -249,6 +249,7 @@ def create_database(database_name: str, params: dict):
     :param params: параметры соединения
     :return:
     """
+    print(f">>> Создаем базу данных {database_name}")
     conn = psycopg2.connect(dbname='postgres', **params)  # создаем соединение с БД
     conn.autocommit = True  # включаем автокоммит запросов в БД
     cur = conn.cursor()  # создаем курсор
@@ -290,7 +291,7 @@ def employers_table_filling(database_name: str, params: dict, employers_list):
     """
     Заполняет таблицу employers данными из списка работодателей
     """
-    # считываем данные из файла
+    print(">>> Заполняем таблицу по работодателям")
     conn = psycopg2.connect(dbname=database_name, **params) # создаем соединение с БД
 
     # запускаем заполнение таблицы
@@ -314,7 +315,8 @@ def vacancies_table_filling(database_name: str, params: dict, vacancies_list):
     """
     Заполняет таблицу employers данными из списка работодателей
     """
-    # считываем данные из файла
+    print(">>> Заполняем таблицу по вакансиям")
+
     conn = psycopg2.connect(dbname=database_name, **params) # создаем соединение с БД
 
     # запускаем заполнение таблицы
@@ -346,8 +348,7 @@ def vacancies_table_filling(database_name: str, params: dict, vacancies_list):
 #     d1 = a['items'][i]
 #     print(d1)
 #
-a2 = get_employers_list(file_employers)  # создаем список работодателей с количеством вакансий
-a3 = get_all_vacancies(a2)  # создание списка всех вакансий
+
 # for i in a3:
 #     if i['vacancy_id'] == 72664540:
 #         print(i)
@@ -362,6 +363,9 @@ a3 = get_all_vacancies(a2)  # создание списка всех вакан�
 
 # a1 = reading_json(file_employers)
 # print(a1)
+
+a2 = get_employers_list(file_employers)  # создаем список работодателей с количеством вакансий
+a3 = get_all_vacancies(a2)  # создание списка всех вакансий
 
 c1 = get_params(file_config, "postgresql")  # получаем словарь с параметрами для создания БД
 # print(c1)
