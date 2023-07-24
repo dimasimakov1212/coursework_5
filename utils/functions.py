@@ -47,72 +47,13 @@ def get_number_pages_for_search(num_vacancies):
     return num_pages
 
 
-# def get_vacancies_hh_by_employer(employer_id, num_pages):
-#     """
-#     Формирует запрос на API сайта HeadHunter для получения выборки вакансий
-#     по работодателю
-#     :return: список вакансий по запросу
-#     """
-#
-#     per_page_num = 100  # задаем кол-во вакансий на 1 странице
-#     page_num = num_pages  # задаем количество страниц
-#     vacancies_count = 0  # задаем счетчик вакансий
-#     url_api = f'https://api.hh.ru/vacancies'  # адрес запроса вакансий через API
-#     vacancies_list = []  # список, в который будут сохраняться вакансии по запросу
-#
-#     # перебираем страницы с вакансиями
-#     for page in range(0, page_num):
-#
-#         # формируем справочник для параметров GET-запроса
-#         params = {
-#             'employer_id': employer_id,
-#             'page': page,  # Индекс страницы поиска на HH
-#             'per_page': per_page_num  # Кол-во вакансий на 1 странице
-#         }
-#
-#         headers = {
-#             "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 "
-#                           "Safari/537.36",
-#         }
-#
-#         req = requests.get(url_api, params=params, headers=headers)  # Посылаем запрос к API
-#
-#         if req.status_code == 200:  # проверяем на корректность ответа
-#
-#             data_in = req.content.decode()  # Декодируем ответ API, чтобы Кириллица отображалась корректно
-#             req.close()
-#
-#             data_out = json.loads(data_in)  # преобразуем полученные данные из формата json
-#
-#             # полученные вакансии складываем в словарь и добавляем его в список
-#             for vacancy in data_out['items']:
-#             #
-#             #     # запускаем метод формирования словаря
-#             #     vacancy_dict = HeadHunterApi.get_vacancy_dict(vacancy)
-#             #
-#             #     vacancies_list.append(vacancy_dict)  # полученный словарь добавляем в список
-#                 vacancies_count += 1  # увеличиваем счетчик вакансий
-#
-#         if req.status_code != 200:
-#             print("В настоящий момент сайт недоступен. Попробуйте позже.")
-#
-#         if vacancies_count == data_out['found']:  # проверка на наличие вакансий на странице
-#             break
-#
-#         time.sleep(0.2)  # временная задержка во избежание блокировки большого количества запросов
-#
-#     print(vacancies_count)
-#
-#     return data_out
-
-
 def get_vacancies_by_employer(employer_id, page_num):
     """
     Формирует запрос на API сайта HeadHunter для получения выборки вакансий
     по работодателю
     employer_id - id работодателя
     page_num - номер страницы поиска
-    :return: список вакансий по запросу
+    :return: список вакансий по запросу на одной странице поиска
     """
 
     url_api = 'https://api.hh.ru/vacancies'  # адрес запроса вакансий через API
@@ -187,6 +128,7 @@ def get_all_vacancies_by_employer(employer_id, num_pages):
     :return: список всех вакансий работодателя
     """
     employer_vacancies = []  # задаем список, в который будут записаны все вакансии работодателя
+    vacancies_count = 0  # задаем счетчик вакансий
 
     for page in range(num_pages):  # запускаем перебор страниц с вакансиями
         vacancies_per_page = get_vacancies_by_employer(employer_id, page)  # получаем вакансии на одной странице
@@ -194,19 +136,27 @@ def get_all_vacancies_by_employer(employer_id, num_pages):
         for count in vacancies_per_page['items']:  # запускаем перебор вакансий на странице
             vacancy = get_vacancy_dict(count)  # формируем словарь с вакансией с необходимыми данными
             employer_vacancies.append(vacancy)  # добавляем словарь вакансии в список
+            vacancies_count += 1  # увеличиваем счетчик вакансий
+
+        if vacancies_count == vacancies_per_page['found']:  # проверка на наличие вакансий на странице
+            break
+
+        time.sleep(0.2)  # временная задержка во избежание блокировки большого количества запросов
+
+    # print(vacancies_count)
 
     return employer_vacancies
 
 
-a = get_vacancies_by_employer(3127, 0)
+a = get_vacancies_by_employer(669587, 0)  # запрос на нулевую страницу чтобы получить количество вакансий работодателя
 # print(a)
 # for i in range(0, 6):
 #     d1 = a['items'][i]
 #     print(d1)
 #
-b = get_number_vacancies_by_employer(a)
+b = get_number_vacancies_by_employer(a)  # получаем количество вакансий
 print(b)
-c = get_number_pages_for_search(b)
+c = get_number_pages_for_search(b)  # получаем количество страниц с вакансиями работодателя
 print(c)
 
 # for vac in a['items']:
@@ -220,6 +170,9 @@ print(c)
 # check work
 # check work_2
 
-d = get_all_vacancies_by_employer(3127, c)
+d = get_all_vacancies_by_employer(669587, c)  # получаем все вакансии работодателя
 print(len(d))
 # print(d)
+
+# a1 = reading_json(file_employers)
+# print(a1)
