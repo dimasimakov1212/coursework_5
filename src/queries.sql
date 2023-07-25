@@ -1,6 +1,5 @@
 [employers]
 query1=SELECT employer_name, number_vacancies FROM employers
 
-[test2]
-com2=SELECT company_name
-com3=FROM customers
+[vacancies]
+query1=SELECT employers.employer_name, vacancy_name, salary_from, salary_to, vacancy_url FROM vacancies JOIN employers USING(employer_id)

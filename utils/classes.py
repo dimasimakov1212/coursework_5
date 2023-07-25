@@ -33,11 +33,32 @@ class DBManager:
 
         with conn.cursor() as cur:
             for query in sql_dict:
-                # передаем данные из списка в таблицу базы данных
-                cur.execute(sql_dict[query])
-                results = cur.fetchall()
+                cur.execute(sql_dict[query])  # передаем запрос в базу данных
+                results = cur.fetchall()  # получаем данные по запросу
                 for item in results:
                     print(f'Компания - {item[0]}, количество вакансий - {item[1]}')
 
         conn.close()  # закрываем соединение с БД
 
+    def get_vacancies_list(self):
+        """
+        Получение списка всех вакансий с указанием названия компании,
+        названия вакансии и зарплаты и ссылки на вакансию
+        :return:
+        """
+
+        sql_dict = get_params(self.file_sql_queries, 'vacancies')  # получаем список sql запросов
+
+        conn = psycopg2.connect(dbname=self.db_name, **self.params)  # создаем соединение с БД
+
+        # запускаем выполнение sql запросов из словаря
+
+        with conn.cursor() as cur:
+            for query in sql_dict:
+                cur.execute(sql_dict[query])  # передаем запрос в базу данных
+                results = cur.fetchall()  # получаем данные по запросу
+                for item in results:
+                    print(f'Компания - {item[0]}, вакансия - {item[1]}, зарплата - {item[2]}-{item[3]},'
+                          f' ссылка на вакансию - {item[4]}')
+
+        conn.close()  # закрываем соединение с БД
