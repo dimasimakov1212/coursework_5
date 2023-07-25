@@ -202,11 +202,11 @@ def get_all_vacancies(employers_data):
     """
     vacancies_all = []  # задаем список, в который будут записаны все вакансии
 
-    print("\n>>> Загружаем данные по вакансиям "
+    print("\n>>> Загружаем данные по вакансиям\n"
           "В зависимости от количества вакансий, это может занять продолжительное время. Подождите...\n")
 
     # запускаем перебор работодателей
-    for employer in employers_data:
+    for employer in tqdm(employers_data, desc='Загрузка', leave=False):
 
         # получаем количество страниц с вакансиями работодателя
         number_pages = get_number_pages_for_search(employer['vacancies_count'])
