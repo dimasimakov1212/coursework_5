@@ -120,6 +120,11 @@ def get_vacancies_list_with_high_salary():
     :return:
     """
     print('\n--- Вывод списка всех вакансий, у которых зарплата выше средней ---')
+
+    params = get_params(file_config, "postgresql")  # получаем параметры подключения к БД
+    vacancies_higher = DBManager(params, database_name)  # инициализируем экземпляр класса
+    vacancies_higher.get_vacancies_with_higher_salary()  # запускаем метод класса
+
     start_menu()
 
 

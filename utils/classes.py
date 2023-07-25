@@ -83,3 +83,25 @@ class DBManager:
                     print(f'Вакансия - {item[0]}, средняя зарплата - {item[1]}, ссылка на вакансию - {item[2]}')
 
         conn.close()  # закрываем соединение с БД
+
+    def get_vacancies_with_higher_salary(self):
+        """
+        Получение списка всех вакансий, у которых зарплата выше средней по всем вакансиям
+        :return:
+        """
+
+        sql_dict = get_params(self.file_sql_queries, 'salary_higher')  # получаем список sql запросов
+
+        conn = psycopg2.connect(dbname=self.db_name, **self.params)  # создаем соединение с БД
+
+        # запускаем выполнение sql запросов из словаря
+
+        with conn.cursor() as cur:
+            for query in sql_dict:
+                cur.execute(sql_dict[query])  # передаем запрос в базу данных
+                results = cur.fetchall()  # получаем данные по запросу
+                for item in results:
+                    print(f'Вакансия - {item[0]}, зарплата - {item[1]}-{item[2]},'
+                          f' ссылка на вакансию - {item[3]}')
+
+        conn.close()  # закрываем соединение с БД
