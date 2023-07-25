@@ -11,4 +11,4 @@ query1=SELECT vacancy_name, ((salary_to + salary_from) / 2) AS salary_avg, vacan
 query1=SELECT vacancy_name, salary_from, salary_to, vacancy_url FROM vacancies WHERE (salary_from + salary_to) / 2 > (SELECT AVG((salary_from + salary_to) / 2) FROM vacancies WHERE salary_from <> 0 AND salary_to <> 0)
 
 [keyword]
-query1=SELECT vacancy_name, salary_from, salary_to FROM vacancies WHERE LOWER(vacancy_name) LIKE keyword
+query1=SELECT vacancy_name, salary_from, salary_to, vacancy_url FROM vacancies WHERE LOWER(vacancy_name) LIKE keyword

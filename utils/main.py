@@ -133,7 +133,16 @@ def get_vacancies_list_by_key_word():
     Получение списка всех вакансий по ключевому слову
     :return:
     """
+    print('Введите ключевое слово, по которому будет осуществлен поиск вакансий')
+    user_keyword = input('>>> ')
+    keyword = user_keyword.lower()
+
     print('\n--- Вывод списка всех вакансий, в названии которых содержатся ключевые слова ---')
+
+    params = get_params(file_config, "postgresql")  # получаем параметры подключения к БД
+    vacancies_keyword = DBManager(params, database_name)  # инициализируем экземпляр класса
+    vacancies_keyword.get_vacancies_with_keyword(keyword)  # запускаем метод класса
+
     start_menu()
 
 

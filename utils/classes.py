@@ -105,3 +105,26 @@ class DBManager:
                           f' ссылка на вакансию - {item[3]}')
 
         conn.close()  # закрываем соединение с БД
+
+    def get_vacancies_with_keyword(self, keyword):
+        """
+        Получение списка всех вакансий, в названии которых содержатся ключевые слова
+        :return:
+        """
+
+        sql_dict = get_params(self.file_sql_queries, 'keyword')  # получаем список sql запросов
+
+        conn = psycopg2.connect(dbname=self.db_name, **self.params)  # создаем соединение с БД
+
+        # запускаем выполнение sql запросов из словаря
+
+        with conn.cursor() as cur:
+            for query in sql_dict:
+                sql_query = sql_dict[query].replace('keyword', f"'%{keyword}%'")
+                cur.execute(sql_query)  # передаем запрос в базу данных
+                results = cur.fetchall()  # получаем данные по запросу
+                for item in results:
+                    print(f'Вакансия - {item[0]}, зарплата - {item[1]}-{item[2]},'
+                          f' ссылка на вакансию - {item[3]}')
+
+        conn.close()  # закрываем соединение с БД
