@@ -80,7 +80,7 @@ def get_employers_list_and_vacancies_count():
 
     params = get_params(file_config, "postgresql")  # получаем параметры подключения к БД
     employers = DBManager(params, database_name)  # инициализируем экземпляр класса
-    employers.get_employers_list_and_vacancies_number()  # запускаем метод класса
+    employers.get_companies_and_vacancies_count()  # запускаем метод класса
 
     start_menu()
 
@@ -95,7 +95,7 @@ def get_all_vacancies_list():
 
     params = get_params(file_config, "postgresql")  # получаем параметры подключения к БД
     vacancies = DBManager(params, database_name)  # инициализируем экземпляр класса
-    vacancies.get_vacancies_list()  # запускаем метод класса
+    vacancies.get_all_vacancies()  # запускаем метод класса
 
     start_menu()
 
@@ -106,6 +106,11 @@ def get_average_salary():
     :return:
     """
     print('\n--- Вывод средней зарплаты по вакансиям ---')
+
+    params = get_params(file_config, "postgresql")  # получаем параметры подключения к БД
+    vacancies_avg = DBManager(params, database_name)  # инициализируем экземпляр класса
+    vacancies_avg.get_avg_salary()  # запускаем метод класса
+
     start_menu()
 
 

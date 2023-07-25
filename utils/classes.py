@@ -19,7 +19,7 @@ class DBManager:
                f"{self.params}\n" \
                f"{self.db_name}"
 
-    def get_employers_list_and_vacancies_number(self):
+    def get_companies_and_vacancies_count(self):
         """
         Получение списка всех компаний и количества вакансий у каждой компании
         :return:
@@ -40,7 +40,7 @@ class DBManager:
 
         conn.close()  # закрываем соединение с БД
 
-    def get_vacancies_list(self):
+    def get_all_vacancies(self):
         """
         Получение списка всех вакансий с указанием названия компании,
         названия вакансии и зарплаты и ссылки на вакансию
@@ -60,5 +60,26 @@ class DBManager:
                 for item in results:
                     print(f'Компания - {item[0]}, вакансия - {item[1]}, зарплата - {item[2]}-{item[3]},'
                           f' ссылка на вакансию - {item[4]}')
+
+        conn.close()  # закрываем соединение с БД
+
+    def get_avg_salary(self):
+        """
+        Получение средней зарплаты по вакансиям
+        :return:
+        """
+
+        sql_dict = get_params(self.file_sql_queries, 'salary_avg')  # получаем список sql запросов
+
+        conn = psycopg2.connect(dbname=self.db_name, **self.params)  # создаем соединение с БД
+
+        # запускаем выполнение sql запросов из словаря
+
+        with conn.cursor() as cur:
+            for query in sql_dict:
+                cur.execute(sql_dict[query])  # передаем запрос в базу данных
+                results = cur.fetchall()  # получаем данные по запросу
+                for item in results:
+                    print(f'Вакансия - {item[0]}, средняя зарплата - {item[1]}, ссылка на вакансию - {item[2]}')
 
         conn.close()  # закрываем соединение с БД
