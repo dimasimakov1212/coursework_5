@@ -1,3 +1,5 @@
+from utils.functions import get_params
+
 
 def start_menu():
     """
