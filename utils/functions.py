@@ -342,36 +342,16 @@ def vacancies_table_filling(database_name: str, params: dict, vacancies_list):
         conn.close()  # закрываем запись в БД
 
 
-# a = get_vacancies_by_employer(669587, 0)  # запрос на нулевую страницу чтобы получить количество вакансий работодателя
-# print(a)
-# for i in range(0, 6):
-#     d1 = a['items'][i]
-#     print(d1)
-#
+# a2 = get_employers_list(file_employers)  # создаем список работодателей с количеством вакансий
+# a3 = get_all_vacancies(a2)  # создание списка всех вакансий
 
-# for i in a3:
-#     if i['vacancy_id'] == 72664540:
-#         print(i)
-
-# b = get_number_vacancies_by_employer(a)  # получаем количество вакансий
-# print(b)
-# c = get_number_pages_for_search(b)  # получаем количество страниц с вакансиями работодателя
-# print(c)
-
-# d = get_all_vacancies_by_employer(669587, c)  # получаем все вакансии работодателя
-# print(len(d))
-
-# a1 = reading_json(file_employers)
-# print(a1)
-
-a2 = get_employers_list(file_employers)  # создаем список работодателей с количеством вакансий
-a3 = get_all_vacancies(a2)  # создание списка всех вакансий
-
-c1 = get_params(file_config, "postgresql")  # получаем словарь с параметрами для создания БД
+# c1 = get_params(file_config, "postgresql")  # получаем словарь с параметрами для создания БД
 # print(c1)
-create_database('vacancies_hh', c1)  # создаем базу данных
-employers_table_filling('vacancies_hh', c1, a2)
-vacancies_table_filling('vacancies_hh', c1, a3)
+# create_database('vacancies_hh', c1)  # создаем базу данных
+# employers_table_filling('vacancies_hh', c1, a2)
+# vacancies_table_filling('vacancies_hh', c1, a3)
 
-# c2 = get_params(file_sql_queries, 'test2')  # получаем словарь с sql запросами
+# c2 = get_params(file_sql_queries, 'employers')  # получаем словарь с sql запросами
 # print(c2)
+# for q in c2:
+#     print(c2[q])

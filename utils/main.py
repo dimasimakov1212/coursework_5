@@ -1,4 +1,11 @@
+import os
 from utils.functions import get_params
+from utils.classes import DBManager
+
+# файл с параметрами для создания базы данных
+file_config = os.path.abspath('./database.ini')
+
+database_name = 'vacancies_hh'
 
 
 def start_menu():
@@ -70,6 +77,11 @@ def get_employers_list_and_vacancies_count():
     :return:
     """
     print('\nВывод списка всех компаний')
+
+    params = get_params(file_config, "postgresql")  # получаем параметры подключения к БД
+    employers = DBManager(params, database_name)  # инициализируем экземпляр класса
+    employers.get_employers_list_and_vacancies_number()  # запускаем метод класса
+
     start_menu()
 
 
