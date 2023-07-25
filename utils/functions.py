@@ -169,7 +169,7 @@ def get_employers_list(employers_data):
     # получаем список работодателей
     employers = reading_json(employers_data)
     print(f"Получен список из {len(employers)} работодателей")
-    print('Полчаем данные о вакансиях\n')
+    print('>>> Полчаем данные о вакансиях')
 
     # запускаем перебор работодателей
     for employer in employers:
@@ -202,7 +202,8 @@ def get_all_vacancies(employers_data):
     """
     vacancies_all = []  # задаем список, в который будут записаны все вакансии
 
-    print("\nЗагружаем данные по вакансиям, подождите...\n")
+    print("\n>>> Загружаем данные по вакансиям "
+          "В зависимости от количества вакансий, это может занять продолжительное время. Подождите...\n")
 
     # запускаем перебор работодателей
     for employer in employers_data:
