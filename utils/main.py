@@ -144,7 +144,7 @@ def get_vacancies_list_by_key_word():
     user_keyword = input('>>> ')
     keyword = user_keyword.lower()
 
-    print('\n--- Вывод списка всех вакансий, в названии которых содержатся ключевые слова ---')
+    print('\n--- Вывод списка всех вакансий, в названии которых содержится ключевое слово ---')
 
     params = get_params(file_config, "postgresql")  # получаем параметры подключения к БД
     vacancies_keyword = DBManager(params, database_name)  # инициализируем экземпляр класса
