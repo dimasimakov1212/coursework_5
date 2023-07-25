@@ -4,15 +4,15 @@ import requests
 import time
 import psycopg2
 from configparser import ConfigParser
-from tqdm import tqdm,
+from tqdm import tqdm
 
 
 # файл в формате json со списком работодателей
-# file_employers = os.path.abspath('../src/employers.json')
-file_employers = os.path.abspath('../src/test.json')
+# file_employers = os.path.abspath('./src/employers.json')
+file_employers = os.path.abspath('./src/test.json')
 
 # файл с параметрами для создания базы данных
-file_config = os.path.abspath('../database.ini')
+file_config = os.path.abspath('./database.ini')
 
 # файл с sql запросами
 file_sql_queries = os.path.abspath('../src/queries.sql')
@@ -341,6 +341,24 @@ def vacancies_table_filling(database_name: str, params: dict, vacancies_list):
 
     finally:
         conn.close()  # закрываем запись в БД
+
+
+def get_vacancies_and_create_database(db_name):
+    """
+    Соединяет вместе функции поиска вакансий и создания базы данных
+    :return:
+    """
+    employers_list = get_employers_list(file_employers)  # создаем список работодателей с количеством вакансий
+
+    vacancies_list = get_all_vacancies(employers_list)  # создание списка всех вакансий
+
+    params_dict = get_params(file_config, "postgresql")  # получаем словарь с параметрами для создания БД
+
+    create_database(db_name, params_dict)  # создаем базу данных
+
+    employers_table_filling(db_name, params_dict, employers_list)  # заполняем таблицу работодателей
+
+    vacancies_table_filling(db_name, params_dict, vacancies_list)
 
 
 # a2 = get_employers_list(file_employers)  # создаем список работодателей с количеством вакансий

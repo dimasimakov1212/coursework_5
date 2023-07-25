@@ -1,9 +1,13 @@
 import os
-from utils.functions import get_params
+from utils.functions import get_params, get_vacancies_and_create_database
 from utils.classes import DBManager
 
 # файл с параметрами для создания базы данных
 file_config = os.path.abspath('./database.ini')
+
+# файл в формате json со списком работодателей
+# file_employers = os.path.abspath('../src/employers.json')
+file_employers = os.path.abspath('../src/test.json')
 
 database_name = 'vacancies_hh'
 
@@ -67,7 +71,10 @@ def get_vacancies_and_db_create():
     Запускает поиск вакансий и создание базы данных
     :return:
     """
-    print('\nЗапускаю поиск вакансий')
+    print('\nЗапускаю поиск вакансий и создание базы данных')
+
+    get_vacancies_and_create_database(database_name)
+
     start_menu()
 
 
