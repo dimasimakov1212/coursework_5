@@ -123,6 +123,9 @@ class DBManager:
                 sql_query = sql_dict[query].replace('keyword', f"'%{keyword}%'")
                 cur.execute(sql_query)  # передаем запрос в базу данных
                 results = cur.fetchall()  # получаем данные по запросу
+
+                if len(results) == 0:
+                    print('По указанному ключевому слову нет результатов')
                 for item in results:
                     print(f'Вакансия - {item[0]}, зарплата - {item[1]}-{item[2]},'
                           f' ссылка на вакансию - {item[3]}')
