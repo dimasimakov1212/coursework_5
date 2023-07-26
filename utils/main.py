@@ -5,11 +5,7 @@ from utils.classes import DBManager
 # файл с параметрами для создания базы данных
 file_config = os.path.abspath('./database.ini')
 
-# файл в формате json со списком работодателей
-# file_employers = os.path.abspath('../src/employers.json')
-file_employers = os.path.abspath('../src/test.json')
-
-database_name = 'vacancies_hh'
+database_name = 'vacancies_hh'  # название создаваемой базы данных
 
 
 def start_menu():
@@ -38,7 +34,7 @@ def main_menu():
 
     print('0 - Выход из программы')
 
-    user_choice = input('>>> ')
+    user_choice = input('>>> ')  # запрашиваем выбор пользователя
 
     if user_choice == '1':
         get_vacancies_and_db_create()  # парсинг вакансий и создание БД
@@ -58,7 +54,7 @@ def main_menu():
     if user_choice == '6':
         get_vacancies_list_by_key_word()  # вывод списка вакансий по ключевому слову
 
-    if user_choice == '0':
+    if user_choice == '0':  # завершение программы
         exit()
 
     else:

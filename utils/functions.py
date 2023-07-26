@@ -8,14 +8,14 @@ from tqdm import tqdm
 
 
 # файл в формате json со списком работодателей
-# file_employers = os.path.abspath('./src/employers.json')
-file_employers = os.path.abspath('./src/test.json')
+file_employers = os.path.abspath('./src/employers.json')
+# file_employers = os.path.abspath('./src/test.json')
 
 # файл с параметрами для создания базы данных
 file_config = os.path.abspath('./database.ini')
 
 # файл с sql запросами
-file_sql_queries = os.path.abspath('../src/queries.sql')
+# file_sql_queries = os.path.abspath('../src/queries.sql')
 
 
 def reading_json(file_data):
@@ -23,8 +23,8 @@ def reading_json(file_data):
     Считывает данные из формата json
     :return:
     """
-    with open(file_data, 'r', encoding='utf-8') as file:
-        data = json.load(file)
+    with open(file_data, 'r', encoding='utf-8') as file:  # считываем содержимое файла
+        data = json.load(file)  # преобразуем из формата json
     return data
 
 
@@ -51,7 +51,7 @@ def get_number_pages_for_search(num_vacancies):
     """
     Определяет количество страниц, необходимых для поиска вакансий
     :param num_vacancies: количество вакансий работодателя
-    :return: num_pages
+    :return: num_pages количество страниц для поиска
     """
     num_pages = round((num_vacancies + 50) / 100)
 
@@ -185,9 +185,9 @@ def get_employers_list(employers_data):
             continue
 
         # формируем словарь
-        employer_dict['employer_id'] = employer['id']
-        employer_dict['employer_name'] = req['items'][0]['employer']['name']
-        employer_dict['vacancies_count'] = number_vacancies
+        employer_dict['employer_id'] = employer['id']  # id работодателя
+        employer_dict['employer_name'] = req['items'][0]['employer']['name']  # наименование работодателя
+        employer_dict['vacancies_count'] = number_vacancies  # количество вакансий работодателя
 
         employers_list.append(employer_dict)  # добавляем словарь с работодателем в список
 
@@ -226,7 +226,7 @@ def get_all_vacancies(employers_data):
 
 def get_params(filename, section):
     """
-    Получает параметры конфигурации из файла с данными
+    Получает параметры из файла с данными
     :return: словарь с параметрами
     """
     parser = ConfigParser()  # создаем парсер
@@ -310,7 +310,7 @@ def employers_table_filling(database_name: str, params: dict, employers_list):
                     cur.execute('SELECT * FROM employers')  # записываем данные в таблицу
 
     finally:
-        conn.close()  # закрываем запись в БД
+        conn.close()  # закрываем соединение с БД
 
 
 def vacancies_table_filling(database_name: str, params: dict, vacancies_list):
@@ -329,7 +329,7 @@ def vacancies_table_filling(database_name: str, params: dict, vacancies_list):
                 for vacancy in vacancies_list:
                     # передаем данные из списка в таблицу базы данных
 
-                    cur.execute('INSERT INTO vacancies VALUES (%s, %s, %s, %s, %s, %s)',
+                    cur.execute('INSERT INTO vacancies VALUES (%s, %s, %s, %s, %s, %s) ON CONFLICT DO NOTHING',
                                 (vacancy['vacancy_id'],
                                  vacancy['vacancy_name'],
                                  vacancy['salary_from'],
@@ -341,7 +341,7 @@ def vacancies_table_filling(database_name: str, params: dict, vacancies_list):
                     cur.execute('SELECT * FROM vacancies')  # записываем данные в таблицу
 
     finally:
-        conn.close()  # закрываем запись в БД
+        conn.close()  # закрываем соединение с БД
 
 
 def get_vacancies_and_create_database(db_name):
@@ -360,18 +360,3 @@ def get_vacancies_and_create_database(db_name):
     employers_table_filling(db_name, params_dict, employers_list)  # заполняем таблицу работодателей
 
     vacancies_table_filling(db_name, params_dict, vacancies_list)
-
-
-# a2 = get_employers_list(file_employers)  # создаем список работодателей с количеством вакансий
-# a3 = get_all_vacancies(a2)  # создание списка всех вакансий
-
-# c1 = get_params(file_config, "postgresql")  # получаем словарь с параметрами для создания БД
-# print(c1)
-# create_database('vacancies_hh', c1)  # создаем базу данных
-# employers_table_filling('vacancies_hh', c1, a2)
-# vacancies_table_filling('vacancies_hh', c1, a3)
-
-# c2 = get_params(file_sql_queries, 'employers')  # получаем словарь с sql запросами
-# print(c2)
-# for q in c2:
-#     print(c2[q])
