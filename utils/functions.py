@@ -4,8 +4,8 @@ import requests
 import time
 import psycopg2
 from configparser import ConfigParser
-from tqdm import tqdm
 
+from tqdm import tqdm
 
 # файл в формате json со списком работодателей
 file_employers = os.path.abspath('./src/employers.json')
